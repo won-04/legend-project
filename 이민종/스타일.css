@@ -1,0 +1,366 @@
+/* ================================
+   공통 / 초기화
+================================ */
+
+/* 자주 쓰는 색·치수를 한곳에서 관리 (여기만 바꾸면 전체 반영) */
+:root {
+  --rail-width: 68px;    /* 왼쪽 아이콘 바 너비 */
+  --gap-map: 12px;       /* 아이콘 바와 사이드바 사이 여백 */
+
+  --surface: #ffffff;    /* 카드·패널 배경 */
+  --line: #e0e0e0;       /* 경계선 */
+  --text: #333333;       /* 본문 글자 */
+  --muted: #5f6368;      /* 아이콘·보조 글자 */
+  --hover: #f1f3f4;      /* 마우스 오버 배경 */
+  --accent: #1a73e8;     /* 선택 강조 색 */
+  --accent-bg: #e8f0fe;  /* 선택 강조 배경 */
+}
+
+/* 브라우저 기본 여백 제거 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 3개 구역(아이콘바, 사이드바, 지도)을 가로로 배치 */
+body {
+  display: flex;
+  height: 100vh;
+  font-family: "Segoe UI", "Malgun Gothic", sans-serif;
+}
+
+
+/* ================================
+   1. 왼쪽 아이콘 바
+================================ */
+
+.icon-bar {
+  display: flex;
+  flex-direction: column;      /* 자식들을 세로로 쌓기 */
+  align-items: center;
+  width: var(--rail-width);
+  padding-top: 12px;
+  background-color: var(--surface);
+  border-right: 1px solid var(--line);   /* 옅은 경계선으로 구역 구분 */
+  z-index: 3;                  /* 사이드바보다 위에 표시 */
+}
+
+/* 햄버거 메뉴 버튼 */
+.main-menu {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;          /* 완전한 원 */
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.main-menu:hover {
+  background-color: var(--hover);
+}
+
+.icon-list {
+  list-style: none;
+  margin-top: 4px;
+}
+
+.icon-list li {
+  margin-top: 6px;   /* 아이콘 사이 세로 간격 */
+}
+
+/* 하단 그룹(개인정보/설정)을 바닥에 붙임 */
+.icon-bar-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: auto;        /* ★ 위쪽 여백 최대로 → 그룹이 바닥에 붙음 */
+  padding-bottom: 12px;
+}
+
+/* 기능 아이콘 + 하단 버튼: 아이콘(위) + 라벨(아래) 세로 버튼 (스타일 공통) */
+.icon-list button,
+.bottom-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 56px;
+  padding: 8px 0;
+  border: none;
+  border-radius: 14px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;   /* 색 변화를 부드럽게 */
+}
+
+.icon-list button svg,
+.bottom-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.icon-list button .label,
+.bottom-btn .label {
+  font-size: 10px;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.icon-list button:hover,
+.bottom-btn:hover {
+  background-color: var(--hover);
+}
+
+/* 현재 열려 있는 기능 강조 (JS가 .active 부여) */
+.icon-list button.active {
+  background-color: var(--accent-bg);
+  color: var(--accent);
+}
+
+.icon-list button.active .label {
+  color: var(--accent);
+}
+
+
+/* ================================
+   2. 가운데 사이드바 (지도 위에 뜨는 패널)
+================================ */
+
+.sidebar {
+  position: absolute;   /* 자리 차지 없이 지도 위에 떠 있음 */
+  top: 12px;
+  left: calc(var(--rail-width) + var(--gap-map));   /* 아이콘바 + 여백 */
+  width: 300px;
+  z-index: 2;
+}
+
+/* --- 검색창 --- */
+
+.search-box {
+  display: flex;
+  align-items: center;
+  padding: 6px 14px;
+  border: none;                                /* 테두리 대신 그림자로 구분 */
+  border-radius: 24px;                         /* 둥근 알약 모양 */
+  background-color: var(--surface);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.search-box input {
+  flex: 1;
+  padding: 8px 4px;
+  border: none;
+  outline: none;       /* 클릭 시 생기는 파란 테두리 제거 */
+  font-size: 14px;
+}
+
+/* 돋보기 버튼 */
+.search-word {
+  display: flex;               /* SVG를 정중앙에 배치 */
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);        /* SVG의 currentColor가 이 값을 따라감 */
+  cursor: pointer;
+}
+
+.search-word:hover {
+  background-color: var(--hover);
+}
+
+/* --- 음식 테마 카테고리 바 (중간바(full)에서만 표시) --- */
+
+/* 평소엔 숨김 */
+.category-bar {
+  display: none;
+}
+
+/* full 모드에서만: 4개씩 2줄 그리드로 표시 */
+.sidebar.full .category-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+}
+
+/* 검색 결과가 열리면(open) 카테고리 버튼을 가림 → 그 자리에 결과 UI가 놓임 */
+.sidebar.full.open .category-bar {
+  display: none;
+}
+
+/* 개별 카테고리 칩 (글씨만, 세로로 얇게) */
+.category-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;      /* 세로 여백을 줄여 높이를 낮춤 */
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  background-color: var(--surface);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--text);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.category-chip:hover {
+  background-color: #f7f8fa;
+}
+
+/* 선택된 카테고리 강조 (JS가 .active 부여) */
+.category-chip.active {
+  border-color: var(--accent);
+  background-color: var(--accent-bg);
+  color: var(--accent);
+}
+
+/* 접힌 상태: 추가 칩(카페/디저트/피자)은 숨김 */
+.category-bar .extra {
+  display: none;
+}
+
+/* 펼친 상태(.expanded): 추가 칩까지 표시 */
+.category-bar.expanded .extra {
+  display: flex;
+}
+
+/* +N / 접기 버튼 (그리드의 마지막 칸) */
+.category-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;      /* 칩과 동일한 낮은 높이 */
+  border: 1px dashed #c9c9c9;
+  border-radius: 12px;
+  background-color: #f7f8fa;
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.category-more:hover {
+  background-color: #eceef1;
+}
+
+/* --- 검색 결과 패널 --- */
+
+/* 평소엔 숨김 → .open이 붙으면 표시 */
+.result-list {
+  display: none;
+  list-style: none;
+  margin-top: 10px;
+  padding: 6px;
+  border-radius: 12px;
+  background-color: var(--surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+.sidebar.open .result-list {
+  display: block;
+}
+
+.result-list li {
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.result-list li:hover {
+  background-color: var(--hover);
+}
+
+/* --- full 모드 (아이콘 클릭 시 사이드바가 세로로 꽉 참) --- */
+
+.sidebar.full {
+  top: 0;
+  left: var(--rail-width);   /* 아이콘바 바로 옆에 딱 붙임 */
+  height: 100vh;
+  padding: 12px;
+  border-radius: 0;
+  background-color: var(--surface);
+  box-shadow: 3px 0 10px rgba(0, 0, 0, 0.12);
+}
+
+/* full 모드에선 검색창을 그림자 대신 테두리로 구분 */
+.sidebar.full .search-box {
+  box-shadow: none;
+  border: 1px solid var(--line);
+}
+
+
+/* ================================
+   3. 오른쪽 지도 구역
+================================ */
+
+.map-ui {
+  flex: 1;   /* 나머지 가로 공간 전부 차지 */
+}
+
+.map-ui figure {
+  height: 100%;
+}
+
+.map-ui img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+/* ================================
+   4. 기능 패널 영역
+================================ */
+
+/* 검색창/카테고리 바 아래에 기능 패널을 고정 배치
+   (210px = 검색창 + 카테고리 2줄 높이를 대략 비운 값) */
+.panel-section {
+  position: absolute;
+  top: 210px;
+  left: 0;
+  width: 100%;
+}
+
+/* 기본: 모든 패널 숨김 */
+.panel {
+  display: none;
+}
+
+/* 활성화된 패널만 표시 (JS가 .active 부여) */
+.panel.active {
+  display: block;
+}
+
+
+/* ================================
+   5. 랜덤 추천 단계(step)
+================================ */
+
+/* 모든 step은 기본적으로 숨김 */
+.step {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* active가 붙은 step만 화면에 표시 */
+.step.active {
+  display: flex;
+}
