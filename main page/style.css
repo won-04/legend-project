@@ -1,0 +1,424 @@
+/* =====================================================
+   오늘 뭐먹지 - 통합 스타일시트
+   민 / 지 / 원 세 사람의 파일을 하나로 합친 버전
+   ===================================================== */
+
+
+/* =====================================================
+   0. 공통 변수 & 초기화
+   자주 쓰는 색·치수를 여기 한곳에서 관리한다.
+   (이 값만 바꾸면 전체 레이아웃에 반영됨)
+   ===================================================== */
+:root {
+    --sidebar-width: 90px;      /* 왼쪽 사이드바 너비 (원 기준) */
+    --panel-width: 400px;       /* 검색 패널 너비 (원 기준) */
+
+    --search-width: 340px;      /* 검색창 가로 (원 기준) */
+    --search-height: 50px;      /* 검색창 세로 (원 기준) */
+    --search-top: 20px;         /* 검색창 위 여백 */
+    --search-left: 20px;        /* 검색창 왼쪽 여백 */
+
+    --surface: #ffffff;         /* 패널·카드 배경 */
+    --line: #e9ecef;            /* 경계선 */
+    --text: #333333;            /* 본문 글자 */
+    --muted: #868e96;           /* 보조 글자·아이콘 */
+    --hover: #f1f3f5;           /* 마우스 오버 배경 */
+    --accent: #f26969;          /* 강조 색 */
+    --accent-dark: #ee5353;     /* 강조 색(진하게) */
+    --accent-bg: #fdeeee;       /* 강조 배경 */
+}
+
+/* 브라우저 기본 여백 제거 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 사이드바 + 나머지 영역을 가로로 배치 */
+body {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;           /* 페이지 전체 스크롤 방지 */
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont,
+                 "Malgun Gothic", system-ui, sans-serif;
+    color: var(--text);
+}
+
+
+/* =====================================================
+   1. 왼쪽 사이드바
+   구성/위치는 원 파일, 버튼 모양은 민 파일 기준
+   ===================================================== */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;                     /* 화면이 좁아져도 줄어들지 않음 */
+    width: var(--sidebar-width);
+    height: 100vh;
+    padding: 16px 0;
+    background-color: var(--surface);
+    border-right: 1px solid var(--line);
+    z-index: 30;                        /* 패널·지도보다 항상 위 */
+}
+
+/* '오먹' 로고 자리에 놓인 메뉴 바 버튼 */
+.menu-bar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 14px;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.menu-bar-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+.menu-bar-btn:hover {
+    background-color: var(--hover);
+}
+
+/* 메뉴 바 버튼도 선택 시 강조됨 */
+.menu-bar-btn.active {
+    background-color: var(--accent-bg);
+    color: var(--accent);
+}
+
+/* 상단 기능 메뉴 목록 */
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    list-style: none;
+}
+
+/* 하단 고정 그룹 (북마크 / MY / 설정)
+   margin-top:auto 로 위쪽 여백을 최대한 밀어 바닥에 붙인다. */
+.sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    margin-top: auto;
+}
+
+/* 아이콘(위) + 라벨(아래) 형태의 세로 버튼 — 민 파일 스타일 */
+.menu-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 68px;
+    padding: 9px 0;
+    border: none;
+    border-radius: 14px;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.menu-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+.menu-btn .menu-label {
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.3px;
+    color: inherit;             /* 아이콘 색과 라벨 색을 같이 움직이게 */
+}
+
+.menu-btn:hover {
+    background-color: var(--hover);
+    color: var(--accent);
+}
+
+/* 현재 열려 있는 메뉴 강조 (JS가 .active 부여) */
+.menu-btn.active {
+    background-color: var(--accent-bg);
+    color: var(--accent);
+}
+
+
+/* =====================================================
+   2. 사이드바 오른쪽 전체 영역
+   검색창 / 패널 / 지도가 겹쳐 놓이는 기준 상자
+   ===================================================== */
+.main-wrapper {
+    position: relative;         /* 내부 absolute 요소들의 기준점 */
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+
+/* =====================================================
+   3. 상단 고정 검색창
+   크기는 원 파일, 디자인은 민 파일 기준
+   ===================================================== */
+.search-header {
+    position: absolute;
+    top: var(--search-top);
+    left: var(--search-left);
+    width: var(--search-width);
+    z-index: 25;                /* 패널(20)보다 항상 위 */
+}
+
+/* 알약 모양 + 그림자 (민 파일: 테두리 대신 그림자로 구분) */
+.search-box {
+    display: flex;
+    align-items: center;
+    height: var(--search-height);
+    padding: 0 8px 0 20px;
+    border: 1px solid transparent;
+    border-radius: 30px;
+    background-color: var(--surface);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+/* 패널이 열려 있을 때는 배경이 흰 패널이므로
+   그림자 대신 옅은 테두리로 구분한다 (민 파일 방식) */
+body.panel-open .search-box {
+    box-shadow: none;
+    border-color: var(--line);
+}
+
+.search-input {
+    flex: 1;
+    height: 100%;
+    border: none;
+    outline: none;              /* 클릭 시 생기는 기본 테두리 제거 */
+    background: none;
+    font-size: 15px;
+    color: var(--text);
+}
+
+.search-input::placeholder {
+    color: var(--muted);
+}
+
+/* 검색창을 클릭하거나 탭으로 이동해도 강조 테두리가 생기지 않게 한다.
+   (아래 6번의 공통 focus 스타일을 검색박스에서만 덮어씀) */
+.search-input:focus,
+.search-input:focus-visible,
+.search-btn:focus,
+.search-btn:focus-visible {
+    outline: none;
+}
+
+/* 돋보기 버튼 */
+.search-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    color: var(--muted);        /* SVG의 currentColor가 이 값을 따라감 */
+    cursor: pointer;
+    transition: color 0.15s;    /* 색만 바뀌므로 배경 전환은 제외 */
+}
+
+.search-btn svg {
+    width: 19px;
+    height: 19px;
+}
+
+/* 마우스를 올리면 배경 없이 아이콘 색만 빨갛게 */
+.search-btn:hover {
+    color: var(--accent);
+}
+
+
+/* =====================================================
+   4. 검색 / 결과 패널
+   슬라이드 개폐 + 오른쪽 그림자 (지 파일 기준)
+   ===================================================== */
+.search-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    width: var(--panel-width);
+    height: 100%;
+    /* 검색창이 차지하는 높이만큼 위쪽을 비워둔다
+       (위 여백 + 검색창 높이 + 아래 여백) */
+    padding-top: calc(var(--search-top) + var(--search-height) + 20px);
+    background-color: var(--surface);
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.15);   /* 지도와 구분되는 그림자 */
+    transition: transform 0.3s ease;
+    z-index: 20;
+}
+
+/* 닫힌 상태: 왼쪽으로 완전히 밀어서 숨김
+   (패널 오른쪽에 붙어 있는 토글 버튼만 화면 끝에 남는다) */
+.search-panel.closed {
+    transform: translateX(-100%);
+}
+
+/* --- 열기/닫기 토글 버튼 (패널 오른쪽 세로 중앙) --- */
+.panel-toggle-btn {
+    position: absolute;
+    top: 50%;
+    right: -22px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 52px;
+    border: 1px solid var(--line);
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    background-color: var(--surface);
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.12);
+    color: var(--muted);
+    cursor: pointer;
+    z-index: 25;
+    transition: color 0.15s;
+}
+
+.panel-toggle-btn svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.3s ease;
+}
+
+/* 패널이 닫히면 화살표 방향을 뒤집어 '열기'를 뜻하게 함 */
+.search-panel.closed .panel-toggle-btn svg {
+    transform: rotate(180deg);
+}
+
+.panel-toggle-btn:hover {
+    color: var(--accent);
+}
+
+/* --- 음식 종류 필터 (지 파일) --- */
+.filter-section {
+    flex-shrink: 0;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--line);
+}
+
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-btn {
+    padding: 7px 13px;
+    border: 1px solid #ced4da;
+    border-radius: 20px;
+    background-color: var(--surface);
+    font-size: 13px;
+    font-weight: 500;
+    color: #495057;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.filter-btn:hover {
+    background-color: var(--hover);
+}
+
+/* 선택된 카테고리 강조 (JS가 .active 부여) */
+.filter-btn.active {
+    border-color: var(--accent);
+    background-color: var(--accent);
+    color: #ffffff;
+}
+
+/* --- 패널 본문 (검색 결과 / 각 메뉴 화면) --- */
+.panel-body {
+    flex: 1;                    /* 남는 높이를 전부 차지 */
+    min-height: 0;              /* flex 항목이 내용에 밀려 넘치는 것 방지 */
+    overflow-y: auto;           /* 내용이 길면 이 영역만 스크롤 */
+    padding: 20px;
+}
+
+.panel-body h3 {
+    margin-bottom: 12px;
+    font-size: 17px;
+    color: var(--text);
+}
+
+/* 아직 내용이 없을 때 보여주는 안내 문구 */
+.panel-empty {
+    padding-top: 40px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted);
+    text-align: center;
+}
+
+
+/* =====================================================
+   5. 지도 영역
+   이 영역을 클릭하면 패널이 닫힌다 (민 파일 기능)
+   ===================================================== */
+.map-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: #e2e8f0;
+    z-index: 1;                 /* 가장 아래에 깔림 */
+}
+
+.map-placeholder {
+    font-size: 18px;
+    font-weight: bold;
+    color: #64748b;
+    pointer-events: none;       /* 글자를 클릭해도 지도 클릭으로 처리되게 */
+}
+
+
+/* =====================================================
+   6. 접근성 / 반응형
+   ===================================================== */
+
+/* 키보드 탭 이동 시 초점이 어디 있는지 보이게 */
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* 움직임 최소화를 켠 사용자에게는 슬라이드 애니메이션 생략 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}
+
+/* 화면이 좁으면 패널과 검색창을 화면 폭에 맞춰 줄임 */
+@media (max-width: 640px) {
+    :root {
+        --panel-width: 300px;
+        --search-width: 260px;
+    }
+}
