@@ -13,7 +13,6 @@ food-map/
 │   └── style.css           # 전체 스타일
 ├── JS/
 │   ├── main.js             # 동작 스크립트
-│   ├── config.example.js   # 지도 키 설정 예시 (저장소에 포함)
 │   └── config.local.js     # 실제 지도 키 (각자 만듦, 저장소에 안 올라감)
 ├── README.md
 └── .gitignore
@@ -23,8 +22,11 @@ food-map/
 
 별도 빌드나 설치는 필요 없지만, 지도를 띄우려면 아래 순서대로 준비해야 합니다.
 
-1. `JS/config.example.js`를 같은 폴더에 복사해서 `config.local.js`로 이름을 바꿉니다.
-2. `config.local.js` 안의 `"여기에_Client_ID"`를 네이버 클라우드 Maps의 Client ID로 바꿉니다.
+1. `JS` 폴더에 `config.local.js` 파일을 새로 만들고 아래 한 줄을 넣습니다.
+   ```js
+   window.NAVER_MAP_KEY_ID = "여기에_Client_ID";
+   ```
+2. `"여기에_Client_ID"`를 네이버 클라우드 Maps의 Client ID로 바꿉니다.
 3. VS Code Live Server 확장으로 `index.html`을 엽니다.
 
 `file://`로 직접 열면 네이버 지도 인증이 되지 않으므로 Live Server로 열어야 합니다.
