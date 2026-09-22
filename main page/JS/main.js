@@ -212,6 +212,10 @@ function loadNaverMap() {
 
 // 스크립트 로드 완료 시 자동 호출 (callback=initMap)
 window.initMap = function () {
+
+    console.log("initMap 실행");
+    console.log("naver =", window.naver);
+    console.log("naver.maps =", window.naver?.maps);
     // 안내 문구 제거 + 지도가 영역을 꽉 채우도록 flex 해제
     mapArea.innerHTML = "";
     mapArea.style.display = "block";
