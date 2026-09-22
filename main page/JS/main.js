@@ -200,18 +200,35 @@ function loadNaverMap() {
 
     const script = document.createElement("script");
     script.src = "https://oapi.map.naver.com/openapi/v3/maps.js"
-        + "?ncpKeyId=" + encodeURIComponent(keyId) + "&callback=initMap";
-
-    
-    
+        + "?ncpKeyId=" + encodeURIComponent(keyId);
+    script.onload = function () {
+        waitForNaver(0);
+    };
     script.onerror = function () {
         console.error("네이버 지도 스크립트를 불러오지 못했습니다. 인터넷 연결을 확인하세요.");
     };
     document.head.appendChild(script);
 }
 
-// 스크립트 로드 완료 시 자동 호출 (callback=initMap)
-window.initMap = function () {
+// naver 객체가 준비될 때까지 대기 (최대 5초)
+function waitForNaver(tries) {
+    if (window.naver && naver.maps && naver.maps.Map) {
+        initMap();
+        return;
+    }
+
+    if (tries >= 50) {
+        console.error("네이버 지도를 준비하지 못했습니다. Client ID 발급 메뉴와 Web 서비스 URL을 확인하세요.");
+        return;
+    }
+
+    setTimeout(function () {
+        waitForNaver(tries + 1);
+    }, 100);
+}
+
+// 지도 생성
+function initMap() {
     // 안내 문구 제거 + 지도가 영역을 꽉 채우도록 flex 해제
     mapArea.innerHTML = "";
     mapArea.style.display = "block";
@@ -225,7 +242,7 @@ window.initMap = function () {
     naver.maps.Event.addListener(map, "click", function () {
         setPanelOpen(false);
     });
-};
+}
 
 // 인증 실패 시 자동 호출
 window.navermap_authFailure = function () {
