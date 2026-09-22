@@ -1,2 +1,4 @@
 
-window.NAVER_MAP_KEY_ID = "여기에_Client_ID"
+window.NAVER_MAP_KEY_ID =  https://maps.apigw.ntruss.com/map-static/v2
+
+
