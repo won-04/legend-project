@@ -66,9 +66,8 @@ toggleBtn.addEventListener("click", function () {
 });
 
 // 지도 영역 클릭 → 패널 닫기 (민 파일 기능)
-mapArea.addEventListener("click", function () {
-    setPanelOpen(false);
-});
+// 네이버 지도가 붙은 뒤에는 initMap() 안에서 지도 클릭 이벤트로 처리한다.
+// (그냥 DOM click을 쓰면 지도를 드래그만 해도 패널이 닫혀버림)
 
 
 /* =====================================================
@@ -219,8 +218,60 @@ function renderSearchResult(keyword) {
 
 
 /* =====================================================
-   6. 첫 화면 상태
+   6. 네이버 지도
+   ===================================================== */
+
+// 다른 기능(마커, 검색 결과 표시 등)에서도 쓸 수 있게 밖에 둔다
+let map = null;
+
+// 지도 스크립트 불러오기
+// Client ID는 JS/config.local.js 의 window.NAVER_MAP_KEY_ID 에서 읽는다
+function loadNaverMap() {
+    const keyId = window.NAVER_MAP_KEY_ID;
+
+    if (!keyId) {
+        console.error("네이버 지도 Client ID가 없습니다. JS/config.local.js 파일을 확인하세요.");
+        return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://oapi.map.naver.com/openapi/v3/maps.js"
+        + "?ncpKeyId=" + encodeURIComponent(keyId)
+        + "&callback=initMap";
+    script.onerror = function () {
+        console.error("네이버 지도 스크립트를 불러오지 못했습니다. 인터넷 연결을 확인하세요.");
+    };
+    document.head.appendChild(script);
+}
+
+// 스크립트 로드가 끝나면 네이버가 이 함수를 호출한다 (callback=initMap)
+window.initMap = function () {
+    // "지도가 들어갈 영역" 안내 문구 제거
+    mapArea.innerHTML = "";
+    // 안내 문구 가운데 정렬용 flex 해제 (지도가 영역을 꽉 채우도록)
+    mapArea.style.display = "block";
+
+    map = new naver.maps.Map(mapArea, {
+        center: new naver.maps.LatLng(37.5503, 127.0731),  // 세종대 부근
+        zoom: 16,
+    });
+
+    // 지도 클릭 → 패널 닫기 (드래그할 때는 실행되지 않음)
+    naver.maps.Event.addListener(map, "click", function () {
+        setPanelOpen(false);
+    });
+};
+
+// Client ID 인증 실패 시 네이버가 호출하는 함수
+window.navermap_authFailure = function () {
+    console.error("네이버 지도 인증 실패: Client ID와 콘솔에 등록한 Web 서비스 URL을 확인하세요.");
+};
+
+
+/* =====================================================
+   7. 첫 화면 상태
    ===================================================== */
 
 // 처음 들어오면 패널은 닫아두고 지도부터 보여준다.
 setPanelOpen(false);
+loadNaverMap();
