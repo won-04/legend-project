@@ -200,12 +200,9 @@ function loadNaverMap() {
 
     const script = document.createElement("script");
     script.src = "https://oapi.map.naver.com/openapi/v3/maps.js"
-        + "?ncpKeyId=" + encodeURIComponent(keyId);
+        + "?ncpKeyId=" + encodeURIComponent(keyId) + "&callback=initMap";
 
-    script.onload = function () {
-        // SDK 로드가 완료된 후 지도 생성
-        initMap();
-    };
+    
     
     script.onerror = function () {
         console.error("네이버 지도 스크립트를 불러오지 못했습니다. 인터넷 연결을 확인하세요.");
