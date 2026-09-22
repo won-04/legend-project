@@ -1,15 +1,18 @@
+
+
+Index · HTML
 <!DOCTYPE html>
 <html lang="ko">
-
+ 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>오늘 뭐먹지 | 맛집 지도</title>
     <link rel="stylesheet" href="CSS/style.css">
 </head>
-
+ 
 <body>
-
+ 
     <!-- =====================================================
          1. 왼쪽 사이드바
          - 메뉴 구성과 위치: 원 파일 기준
@@ -18,7 +21,7 @@
            (랭킹·숨맛공 아이콘은 기존에 없어서 새로 제작)
     ====================================================== -->
     <aside class="sidebar">
-
+ 
         <!-- '오먹' 로고 자리에 놓인 메뉴(바) 버튼 -->
         <button class="menu-bar-btn" type="button" data-panel="default" title="메뉴" aria-label="메뉴">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -28,10 +31,10 @@
                 <line x1="4" y1="17" x2="20" y2="17" />
             </svg>
         </button>
-
+ 
         <!-- 상단 기능 메뉴 -->
         <ul class="menu">
-
+ 
             <!-- 오늘의 추천 (민의 랜덤/셔플 아이콘) -->
             <li>
                 <button class="menu-btn" type="button" data-panel="today"
@@ -47,7 +50,7 @@
                     <span class="menu-label">오늘의 추천</span>
                 </button>
             </li>
-
+ 
             <!-- 에디터픽 (민의 별 아이콘) -->
             <li>
                 <button class="menu-btn" type="button" data-panel="editor-pick"
@@ -59,7 +62,7 @@
                     <span class="menu-label">에디터픽</span>
                 </button>
             </li>
-
+ 
             <!-- 숨.맛.공 (신규 아이콘: 지도 핀) -->
             <li>
                 <button class="menu-btn" type="button" data-panel="hidden-report"
@@ -87,10 +90,10 @@
                 </button>
             </li>
         </ul>
-
+ 
         <!-- 하단 고정 그룹: 북마크 / MY / 설정 -->
         <div class="sidebar-bottom">
-
+ 
             <!-- 북마크 (민의 북마크 아이콘) -->
             <button class="menu-btn" type="button" data-panel="bookmark"
                     title="북마크" aria-label="북마크">
@@ -100,7 +103,7 @@
                 </svg>
                 <span class="menu-label">북마크</span>
             </button>
-
+ 
             <!-- 마이페이지 (민의 사용자 아이콘) -->
             <button class="menu-btn" type="button" title="마이페이지" aria-label="마이페이지">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -110,7 +113,7 @@
                 </svg>
                 <span class="menu-label">MY</span>
             </button>
-
+ 
             <!-- 설정 (민의 톱니바퀴 아이콘) -->
             <button class="menu-btn" type="button" title="설정" aria-label="설정">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -120,17 +123,17 @@
                 </svg>
                 <span class="menu-label">설정</span>
             </button>
-
+ 
         </div>
-
+ 
     </aside>
-
-
+ 
+ 
     <!-- =====================================================
          2. 사이드바 오른쪽 전체 영역 (검색창 + 패널 + 지도)
     ====================================================== -->
     <div class="main-wrapper">
-
+ 
         <!-- -------------------------------------------------
              2-1. 상단 고정 검색창
              - 크기(340 x 50): 원 파일 기준
@@ -150,7 +153,7 @@
                 </button>
             </form>
         </div>
-
+ 
         <!-- -------------------------------------------------
              2-2. 검색 / 결과 패널
              - 슬라이드 방식으로 열고 닫힘 (지 파일 기준)
@@ -158,7 +161,7 @@
              - 지도와 구분되도록 오른쪽에 그림자
         -------------------------------------------------- -->
         <section class="search-panel" id="search-panel" aria-label="검색 결과 패널">
-
+ 
             <!-- 패널 열기/닫기 토글 버튼 (패널 오른쪽 세로 중앙) -->
             <button class="panel-toggle-btn" id="panel-toggle-btn" type="button"
                     aria-label="검색 패널 닫기" aria-expanded="true">
@@ -167,7 +170,7 @@
                     <polyline points="15 18 9 12 15 6" />
                 </svg>
             </button>
-
+ 
             <!-- 음식 종류 필터 (지 파일의 카테고리 버튼) -->
             <div class="filter-section">
                 <div class="filter-container">
@@ -179,12 +182,12 @@
                     <button class="filter-btn" type="button" data-category="cafe">카페</button>
                 </div>
             </div>
-
+ 
             <!-- 실제 콘텐츠(검색 결과 / 각 메뉴 화면)가 그려지는 영역 -->
             <div class="panel-body" id="panel-body"></div>
-
+ 
         </section>
-
+ 
         <!-- -------------------------------------------------
              2-3. 지도 영역
              - 이 영역을 클릭하면 패널이 닫힘 (민 파일 기능)
@@ -193,10 +196,13 @@
         <main class="map-area" id="map">
             <p class="map-placeholder">지도가 들어갈 영역</p>
         </main>
-
+ 
     </div>
-
+ 
+    <!-- 네이버 지도 Client ID (깃에 올라가지 않는 파일, config.example.js 참고) -->
+    <script src="JS/config.local.js"></script>
     <script src="JS/main.js"></script>
 </body>
-
+ 
 </html>
+ 
